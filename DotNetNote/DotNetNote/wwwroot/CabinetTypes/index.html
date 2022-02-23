@@ -43,10 +43,20 @@
             </thead>
             <tbody>
                 <tr v-for="vm in models" v-bind:key="vm.id">
-                    <td>{{vm.identification}}</td>
-                    <td>{{vm.show}}</td>
+                    <td>
+                        <span v-if="vm.show == true">
+                            {{vm.identification}}
+                        </span>
+                        <span v-else style="text-decoration: line-through;">
+                            {{vm.identification}}
+                        </span>
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="vm.show">                        
+                    </td>
                     <td></td>
                     <td>
+                        <a href="#" v-on:click="btnToggle_Click(vm)">Toggle</a> | 
                         <a href="#" v-on:click="btnDelete_Click(`${vm.id}`)">Delete</a>
                     </td>
                 </tr>
@@ -81,6 +91,18 @@
                     });
 
                     this.identification = "";
+
+                    // 다시 읽어오기
+                    this.displayData();
+                },
+                async btnToggle_Click(vm) {
+                    // crUd: 데이터 수정
+                    await axios.put(`/api/CabinetTypes/${vm.id}`, {
+                        id: vm.id,
+                        identification: vm.identification,
+                        show: !vm.show,
+                        adjusted: vm.adjusted 
+                    });
 
                     // 다시 읽어오기
                     this.displayData();
